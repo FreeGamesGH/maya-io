@@ -18,6 +18,7 @@
   --c-patterns:#3d9cf0; --s-patterns:#dcefff;
   --c-spell:#ef5fa0; --s-spell:#ffe0ee;
   --c-deletrea:#4fae3a; --s-deletrea:#e2f5da;
+  --c-pupiletras:#e0475b; --s-pupiletras:#ffe2e5;
   --f-display:"Fredoka","Baloo 2",ui-rounded,"SF Pro Rounded",system-ui,sans-serif;
   --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:light;
@@ -27,14 +28,14 @@
   --fg:#eef0ff; --muted:#a3a8cf; --accent:#ff86b2; --accent-ink:#2a0717;
   --good:#5bd398; --bad:#ff7c7f; --gold:#ffcf5a;
   --shadow:0 2px 0 rgba(0,0,0,.25),0 12px 26px rgba(0,0,0,.35);
-  --s-words:#4a2f33; --s-palabras:#4a3d1c; --s-sudoku:#1f4239; --s-flow:#352d55; --s-patterns:#1f3854; --s-spell:#4c2a3e; --s-deletrea:#2a4426;
+  --s-words:#4a2f33; --s-palabras:#4a3d1c; --s-sudoku:#1f4239; --s-flow:#352d55; --s-patterns:#1f3854; --s-spell:#4c2a3e; --s-deletrea:#2a4426; --s-pupiletras:#4a2229;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#171a2e; --bg2:#1b2340; --surface:#252a47; --sunk:#1d2139; --line:#363c63;
   --fg:#eef0ff; --muted:#a3a8cf; --accent:#ff86b2; --accent-ink:#2a0717;
   --good:#5bd398; --bad:#ff7c7f; --gold:#ffcf5a;
   --shadow:0 2px 0 rgba(0,0,0,.25),0 12px 26px rgba(0,0,0,.35);
-  --s-words:#4a2f33; --s-palabras:#4a3d1c; --s-sudoku:#1f4239; --s-flow:#352d55; --s-patterns:#1f3854; --s-spell:#4c2a3e; --s-deletrea:#2a4426;
+  --s-words:#4a2f33; --s-palabras:#4a3d1c; --s-sudoku:#1f4239; --s-flow:#352d55; --s-patterns:#1f3854; --s-spell:#4c2a3e; --s-deletrea:#2a4426; --s-pupiletras:#4a2229;
   color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);background-image:radial-gradient(60% 40% at 0% 0%,var(--bg2),transparent 70%),radial-gradient(50% 40% at 100% 100%,var(--bg2),transparent 70%);color:var(--fg);font-family:var(--f-body);font-size:16px;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;overflow:hidden}
@@ -154,6 +155,18 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
 .pq-opt{background:var(--surface);box-shadow:var(--shadow);border-radius:16px;padding:10px 6px;font-family:var(--f-display);font-weight:600;font-size:1.35rem;min-height:58px;display:grid;place-items:center}
 .pq-opt svg{width:100%;max-width:var(--optsz,80px);height:auto;aspect-ratio:1}
 .pq-opt.right{background:var(--good);color:#fff} .pq-opt.wrong{background:var(--bad);color:#fff}
+
+/* pupiletras */
+.pp-wrap{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:8px}
+.pp-wrap.wide{grid-template-rows:none;grid-template-columns:minmax(0,1fr) minmax(180px,.45fr);align-items:center}
+.pp-grid{position:relative;display:grid;width:var(--side);height:var(--side);background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:0;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden}
+.pp-grid span{display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:calc(var(--side)/var(--n)*.52);position:relative;z-index:1;pointer-events:none}
+.pp-grid span.tap{background:color-mix(in srgb,var(--g) 35%,transparent);border-radius:50%}
+.pp-grid span.hintc{background:var(--gold);border-radius:50%;color:#2a1d00}
+.pp-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.pp-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:center}
+.pp-list span{padding:4px 10px;border-radius:999px;background:var(--surface);box-shadow:var(--shadow);font-weight:800;font-size:.92rem}
+.pp-list span.got{background:var(--wc);color:#fff;text-decoration:line-through;text-decoration-thickness:2px}
 .pq-why{margin:0;color:var(--muted);min-height:1.3em;line-height:1.4;text-align:center;font-weight:700}
 
 /* spell */
@@ -612,6 +625,7 @@ const GAMES=[
  {id:'patterns',name:'Patterns',sub:'What comes next?',lang:'en'},
  {id:'spell',name:'Spell It',sub:'Listen, spell, and say it',lang:'en'},
  {id:'deletrea',name:'¡Deletréalo!',sub:'Escucha, deletrea y dilo',lang:'es'},
+ {id:'pupiletras',name:'Pupiletras',sub:'Encuentra las palabras escondidas',lang:'es'},
 ];
 function freshGame(){ return {level:1,progress:0,rough:0,played:0,best:1,chose:false}; }
 function freshPlayer(name,avatar){ const g={}; GAMES.forEach(x=>g[x.id]=freshGame()); return {id:'p'+Date.now().toString(36)+rnd(1e4),name,avatar,stars:0,games:g,seenHelp:{},seenSpell:{}}; }
@@ -672,6 +686,7 @@ const GLYPH={
  flow:'<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><path d="M7 7v9h8v7h8" stroke="#ff6b8b" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="7" r="3.6" fill="#ff6b8b"/><circle cx="23" cy="23" r="3.6" fill="#ff6b8b"/><path d="M23 7h-7" stroke="#3d9cf0" stroke-width="3.4" stroke-linecap="round"/><circle cx="23" cy="7" r="3.6" fill="#3d9cf0"/><circle cx="15" cy="7" r="3.6" fill="#3d9cf0"/></svg>',
  patterns:'<svg width="30" height="30" viewBox="0 0 30 30"><rect x="3" y="10" width="7" height="7" rx="1.5" fill="var(--g)"/><circle cx="15" cy="13.5" r="3.8" fill="var(--g)"/><path d="M23.5 9.5l4 7.5h-8z" fill="var(--g)"/><text x="15" y="27" text-anchor="middle" font-family="var(--f-display)" font-weight="700" font-size="8" fill="var(--fg)">?</text></svg>',
  spell:'<svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="6" width="22" height="18" rx="5" fill="var(--g)"/><rect x="7" y="9" width="16" height="6" rx="2" fill="#13261f"/><text x="15" y="14" text-anchor="middle" font-family="monospace" font-size="5" fill="#7dff9c">ABC</text><circle cx="10" cy="19.5" r="1.8" fill="#fff"/><circle cx="15" cy="19.5" r="1.8" fill="#fff"/><circle cx="20" cy="19.5" r="1.8" fill="#fff"/></svg>',
+ pupiletras:'<svg width="30" height="30" viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" rx="5" fill="var(--gs)"/><line x1="8" y1="9" x2="22" y2="9" stroke="var(--g)" stroke-width="5" stroke-linecap="round" opacity=".5"/><text x="15" y="11" text-anchor="middle" font-family="var(--f-display)" font-weight="700" font-size="6" fill="var(--fg)">S O L</text><text x="15" y="18" text-anchor="middle" font-family="var(--f-display)" font-weight="700" font-size="6" fill="var(--fg)">P A Ñ</text><text x="15" y="25" text-anchor="middle" font-family="var(--f-display)" font-weight="700" font-size="6" fill="var(--fg)">M A R</text></svg>',
  deletrea:'<svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="6" width="22" height="18" rx="5" fill="var(--g)"/><rect x="7" y="9" width="16" height="6" rx="2" fill="#13261f"/><text x="15" y="14" text-anchor="middle" font-family="monospace" font-size="5" fill="#7dff9c">ÑÁÉ</text><circle cx="10" cy="19.5" r="1.8" fill="#fff"/><circle cx="15" cy="19.5" r="1.8" fill="#fff"/><circle cx="20" cy="19.5" r="1.8" fill="#fff"/></svg>',
 };
 function gameVars(el,gid){ el.style.setProperty('--g',`var(--c-${gid})`); el.style.setProperty('--gs',`var(--s-${gid})`); el.style.setProperty('--gink','#ffffff'); }
@@ -766,6 +781,7 @@ const HELP={
  flow:{t:'How to play Flow',s:['Drag from a dot to the other dot of the same color to draw a pipe.','Pipes cannot cross or go through other dots.','Win by connecting every pair AND filling every square on the board.','Drag over a pipe to change it. Hint draws one pipe for you.']},
  patterns:{t:'How to play Patterns',s:['Each question shows a pattern with one piece missing.','Find the rule: numbers might go up by the same amount, letters might skip, shapes might change across each row.','Tap the answer you think fits. You will see the rule after each answer.','5 questions per round. Speed helps a little, but thinking matters most.']},
  spell:{t:'How to play Spell It',s:['Listen to the word. Tap “Hear again” or “Slow” as many times as you like.','Type the spelling with the letter keys, then press Check.','Wrong? You get one more try, then the game shows and spells it for you.','After each word you learn what it means. Then tap the microphone and say the word. If the microphone is not available, say it out loud and tap “I said it”.']},
+ pupiletras:{t:'Cómo jugar Pupiletras',s:['Las palabras de la lista están escondidas en la sopa de letras.','Desliza el dedo desde la primera letra hasta la última de una palabra. También puedes tocar la primera letra y luego la última.','Las palabras pueden ir hacia la derecha o hacia abajo; en niveles más altos también en diagonal y al revés.','Las letras no llevan tilde. ¿Atascado? “Pista” marca la primera letra de una palabra.'],en:'Spanish word search: swipe from the first to the last letter of each word.'},
  deletrea:{t:'Cómo jugar ¡Deletréalo!',s:['Escucha la palabra. Toca “Otra vez” o “Lento” las veces que quieras.','Escribe la palabra con las teclas y pulsa Revisar. Hay teclas para Ñ y tildes.','¿Te equivocaste? Tienes otro intento; después el juego te la deletrea.','Luego verás qué significa (y su traducción al inglés). Toca el micrófono y di la palabra. Si no hay micrófono, dila en voz alta y toca “¡La dije!”.'],en:'Listen, spell the Spanish word, learn its meaning, then say it.'},
 };
 function showHelp(gid,then){
@@ -1115,6 +1131,132 @@ const Patterns=(()=>{
   return {id:'patterns',lang:'en',mount,start,fit,stop(){clearInterval(timer);},_q:makeQ};
 })();
 
+/* ================= PUPILETRAS ================= */
+const PUPI_TEMAS={
+ 'Animales':['perro','gato','vaca','caballo','oveja','conejo','tigre','león','jirafa','mono','oso','pato','llama','alpaca','cóndor','delfín','tortuga','ratón','zorro','búho','ballena','cebra','loro','sapo','pingüino'],
+ 'Frutas':['mango','papaya','plátano','fresa','uva','piña','manzana','pera','limón','naranja','sandía','melón','lúcuma','chirimoya','palta','coco','kiwi','cereza','durazno','maracuyá','granadilla','tuna','guayaba'],
+ 'Comida peruana':['ceviche','causa','lomo','ají','choclo','papa','rocoto','anticucho','tamal','chicha','pollo','arroz','queso','camote','yuca','picarones','turrón','mazamorra','humita','cancha','tacutacu','chupe'],
+ 'Colores':['rojo','azul','verde','amarillo','negro','blanco','rosado','morado','gris','naranja','celeste','marrón','dorado','plateado','turquesa','lila','crema','fucsia'],
+ 'Escuela':['lápiz','libro','cuaderno','regla','mochila','borrador','tiza','pizarra','maestra','recreo','tarea','examen','clase','colores','tijeras','goma','mesa','silla','alumno','patio'],
+ 'Deportes':['fútbol','tenis','vóley','básquet','natación','surf','golf','béisbol','karate','judo','boxeo','ciclismo','atletismo','ajedrez','pelota','gol','arco','equipo','cancha','árbitro'],
+ 'El cuerpo':['cabeza','mano','pie','brazo','pierna','ojo','nariz','boca','oreja','dedo','rodilla','codo','hombro','espalda','cuello','diente','lengua','pelo','uña','corazón'],
+ 'Naturaleza':['árbol','flor','río','mar','montaña','lago','nube','lluvia','sol','luna','estrella','volcán','bosque','selva','desierto','playa','arena','piedra','hoja','viento','nieve','isla'],
+ 'La casa':['cocina','baño','sala','cama','puerta','ventana','techo','mesa','silla','sofá','lámpara','espejo','jardín','escalera','alfombra','cuarto','reloj','plato','vaso','cuchara'],
+ 'Transporte':['carro','bus','tren','avión','barco','bicicleta','moto','taxi','camión','metro','cohete','velero','canoa','tractor','patineta','helicóptero','combi','ambulancia'],
+ 'Profesiones':['doctor','maestro','bombero','policía','piloto','chef','pintor','músico','actor','cartero','dentista','granjero','científico','abogado','arquitecto','enfermera','panadero','escritor'],
+ 'Países':['perú','chile','brasil','méxico','españa','francia','italia','china','japón','canadá','colombia','ecuador','bolivia','argentina','cuba','india','rusia','egipto','grecia','uruguay'],
+};
+const Pupiletras=(()=>{
+  const DIRS_ALL=[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+  const COLS=['#ff8a7a','#3d9cf0','#22b58e','#f7a400','#8f6cff','#ef5fa0','#14b0c9','#79b800','#f5791f','#d843a3','#2fae6b','#a5713f','#5b6bd6','#e2575a'];
+  const FILL='AAAAEEEEIIOOOUUBCCDDLLMMNNPPRRRSSSTTGHJQVYZFÑ';
+  let Z=null, el={}, timer=null, drag=null;
+  function cfg(L){
+    if(L<=3) return {n:8,words:5,dirs:2};
+    if(L<=6) return {n:9,words:L===4?6:7,dirs:3};
+    if(L<=9) return {n:10,words:8,dirs:4};
+    if(L<=13) return {n:11,words:L<=11?9:10,dirs:6};
+    if(L<=17) return {n:12,words:L<=15?11:12,dirs:8};
+    return {n:13,words:L===18?13:14,dirs:8,decoy:true};
+  }
+  const up = w => norm(w).toUpperCase().replace(/[^A-ZÑ]/g,'');
+  function generate(L){
+    const c=cfg(L), n=c.n, dirs=DIRS_ALL.slice(0,c.dirs);
+    for(let attempt=0;attempt<60;attempt++){
+      const tema=pick(Object.keys(PUPI_TEMAS));
+      const maxLen = L<=6 ? n-2 : n;
+      let pool=shuffle(PUPI_TEMAS[tema].filter(w=>up(w).length>=3&&up(w).length<=maxLen)); if(L>6) pool.sort((a,b)=>up(b).length-up(a).length); else pool=pool.slice(0,c.words+4).sort((a,b)=>up(b).length-up(a).length);
+      const grid=new Array(n*n).fill(''); const placed=[];
+      for(const w of pool){
+        if(placed.length>=c.words) break;
+        const W=up(w); if(placed.some(p=>p.W===W)) continue;
+        let ok=false;
+        for(let t=0;t<250&&!ok;t++){
+          const [dr,dc]=pick(dirs); const r0=rnd(n), c0=rnd(n);
+          const r1=r0+dr*(W.length-1), c1=c0+dc*(W.length-1); if(r1<0||r1>=n||c1<0||c1>=n) continue;
+          let fits=true; for(let k=0;k<W.length;k++){ const g=grid[(r0+dr*k)*n+c0+dc*k]; if(g&&g!==W[k]){fits=false;break;} }
+          if(!fits) continue;
+          const cells=[]; for(let k=0;k<W.length;k++){ const i=(r0+dr*k)*n+c0+dc*k; grid[i]=W[k]; cells.push(i); }
+          placed.push({w,W,cells}); ok=true;
+        }
+      }
+      if(placed.length<c.words) continue;
+      const decoySrc=placed.map(p=>p.W).join('');
+      for(let i=0;i<n*n;i++) if(!grid[i]) grid[i]= c.decoy&&Math.random()<.5 ? decoySrc[rnd(decoySrc.length)] : FILL[rnd(FILL.length)];
+      placed.sort((a,b)=>a.W.localeCompare(b.W,'es'));
+      return {level:L,n,tema,grid,words:placed,found:new Set(),colorOf:{},hints:0,start:Date.now(),done:false,hintCell:-1};
+    }
+    return generate(Math.max(1,L-1));
+  }
+  function mount(st){
+    st.innerHTML=`<div class="status"><span>Tema: <b data-r="tema"></b></span><span>Encontradas <b data-r="found">0/0</b></span><span>Tiempo <b data-r="time">0:00</b></span></div>
+      <div class="pp-wrap" data-r="wrap"><div class="fit" data-r="fit"><div class="pp-grid" data-r="grid"></div></div><div class="pp-list" data-r="list"></div></div>
+      <div class="tools"><button class="pill" data-r="hint">Pista</button><button class="pill" data-r="give">Ver respuestas</button></div>`;
+    el={}; st.querySelectorAll('[data-r]').forEach(n=>el[n.dataset.r]=n);
+    el.grid.addEventListener('pointerdown',down); el.grid.addEventListener('pointermove',move); el.grid.addEventListener('pointerup',upEv); el.grid.addEventListener('pointercancel',()=>{drag=null;drawSel();});
+    el.hint.onclick=hint;
+    el.give.onclick=()=>{ if(Z&&!Z.done) confirmSheet('¿Ver todas las respuestas?','Cuenta como una ronda difícil y no da estrellas.','Ver respuestas',()=>finish(true)); };
+  }
+  function fit(){
+    if(!el.wrap||!Z) return;
+    const W=el.wrap.clientWidth, H=el.wrap.clientHeight, wide=W>=640&&W>H*1.15;
+    el.wrap.classList.toggle('wide',wide);
+    requestAnimationFrame(()=>{ const s=Math.floor(Math.min(el.fit.clientWidth,el.fit.clientHeight)); el.grid.style.setProperty('--side',Math.max(200,s)+'px'); el.grid.style.setProperty('--n',Z.n); });
+  }
+  function render(){
+    const n=Z.n; let h=''; for(let i=0;i<n*n;i++) h+=`<span class="${i===Z.hintCell?'hintc':''}">${Z.grid[i]}</span>`;
+    h+=`<svg class="pp-svg" viewBox="0 0 ${n} ${n}" preserveAspectRatio="none" data-svg></svg>`;
+    el.grid.innerHTML=h; el.grid.style.gridTemplateColumns=`repeat(${n},1fr)`;
+    drawSel();
+    el.list.innerHTML=Z.words.map(p=>`<span class="${Z.found.has(p.W)?'got':''}" style="${Z.found.has(p.W)?`--wc:${Z.colorOf[p.W]}`:''}">${esc(p.w)}</span>`).join('');
+    el.tema.textContent=Z.tema; el.found.textContent=`${Z.found.size}/${Z.words.length}`;
+  }
+  const rc=i=>[Math.floor(i/Z.n),i%Z.n];
+  function capsule(a,b,color,op){ const [r0,c0]=rc(a),[r1,c1]=rc(b); return `<line x1="${c0+.5}" y1="${r0+.5}" x2="${c1+.5}" y2="${r1+.5}" stroke="${color}" stroke-width=".78" stroke-linecap="round" opacity="${op}"/>`; }
+  function drawSel(){
+    const svg=el.grid.querySelector('[data-svg]'); if(!svg) return; let h='';
+    Z.words.forEach(p=>{ if(Z.found.has(p.W)) h+=capsule(p.cells[0],p.cells[p.cells.length-1],Z.colorOf[p.W],.45); });
+    if(drag&&drag.cells.length) h+=capsule(drag.cells[0],drag.cells[drag.cells.length-1],'var(--g)',.55);
+    svg.innerHTML=h;
+  }
+  function cellAt(e){ const r=el.grid.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height; if(x<0||y<0||x>=1||y>=1) return -1; return Math.floor(y*Z.n)*Z.n+Math.floor(x*Z.n); }
+  function lineCells(a,b){
+    const [r0,c0]=rc(a),[r1,c1]=rc(b); let dr=r1-r0, dc=c1-c0; if(!dr&&!dc) return [a];
+    // snap to the nearest of 8 directions
+    const ang=Math.atan2(dr,dc), oct=Math.round(ang/(Math.PI/4)); const sr=Math.round(Math.sin(oct*Math.PI/4)), sc=Math.round(Math.cos(oct*Math.PI/4));
+    const len=Math.max(Math.abs(dr),Math.abs(dc)); const cells=[];
+    for(let k=0;k<=len;k++){ const r=r0+sr*k, c=c0+sc*k; if(r<0||r>=Z.n||c<0||c>=Z.n) break; cells.push(r*Z.n+c); }
+    return cells;
+  }
+  let tapStart=-1;
+  function down(e){ if(Z.done) return; const i=cellAt(e); if(i<0) return; e.preventDefault(); el.grid.setPointerCapture(e.pointerId);
+    if(tapStart>=0 && tapStart!==i){ drag={a:tapStart,cells:lineCells(tapStart,i),moved:true}; tapStart=-1; drawSel(); return; }
+    drag={a:i,cells:[i],moved:false}; drawSel(); }
+  function move(e){ if(!drag) return; const i=cellAt(e); if(i<0) return; const cells=lineCells(drag.a,i); if(cells.length>1) drag.moved=true; drag.cells=cells; drawSel(); }
+  function upEv(){
+    if(!drag) return; const d=drag; drag=null;
+    if(!d.moved){ tapStart=d.a; markTap(d.a); return; }
+    tapStart=-1; clearTap();
+    const s=d.cells.map(i=>Z.grid[i]).join(''); const rev=[...s].reverse().join('');
+    const hit=Z.words.find(p=>!Z.found.has(p.W)&&(p.W===s||p.W===rev)&&(sameCells(p.cells,d.cells)||p.W===s||p.W===rev));
+    if(hit){ Z.found.add(hit.W); hit.cells=d.cells.slice(); if(hit.W===rev&&hit.W!==s) hit.cells.reverse(); Z.colorOf[hit.W]=COLS[(Z.found.size-1)%COLS.length]; if(Z.hintCell>=0&&hit.cells.includes(Z.hintCell)) Z.hintCell=-1; render(); if(Z.found.size===Z.words.length) finish(false); }
+    else { drawSel(); el.grid.classList.add('shake'); setTimeout(()=>el.grid.classList.remove('shake'),350); }
+  }
+  const sameCells=(a,b)=>a.length===b.length&&(a.every((x,i)=>x===b[i])||a.every((x,i)=>x===b[b.length-1-i]));
+  function markTap(i){ clearTap(); const c=el.grid.children[i]; if(c) c.classList.add('tap'); }
+  function clearTap(){ el.grid.querySelectorAll('.tap').forEach(x=>x.classList.remove('tap')); }
+  function hint(){ if(Z.done) return; const open=Z.words.filter(p=>!Z.found.has(p.W)); if(!open.length) return; const p=pick(open); Z.hintCell=p.cells[0]; Z.hints++; render(); }
+  function finish(gaveUp){
+    Z.done=true; clearInterval(timer);
+    if(gaveUp){ Z.words.forEach((p,k)=>{ if(!Z.found.has(p.W)){ Z.found.add(p.W); Z.colorOf[p.W]='#9aa0b8'; } }); render(); }
+    const secs=(Date.now()-Z.start)/1000, par=Z.words.length*14+Z.level*5;
+    let s=gaveUp?0:1-Z.hints*(1.2/Z.words.length); if(!gaveUp){ if(secs<par) s+=0.1; else if(secs>2.5*par) s-=0.1; } s=Math.max(0,Math.min(1,s));
+    roundResult('pupiletras',s,gaveUp,gaveUp?'Respuestas':'¡Encontraste todas!',`Tema ${Z.tema}: ${Z.words.length} palabras en ${fmt(secs)}${Z.hints?`, con ${Z.hints} pista${Z.hints>1?'s':''}`:''}.`,start);
+  }
+  function start(){ Z=generate(P().games.pupiletras.level); drag=null; tapStart=-1; render(); fit(); clearInterval(timer); el.time.textContent='0:00'; timer=setInterval(()=>{ if(!Z.done) el.time.textContent=fmt((Date.now()-Z.start)/1000); },1000); }
+  return {id:'pupiletras',lang:'es',mount,start,fit,stop(){clearInterval(timer);},_gen:generate};
+})();
+
 /* ================= SPEECH ================= */
 const Speech=(()=>{
   let voices=[];
@@ -1243,6 +1385,7 @@ function makeSpell(gid,lang){
 
 GAME_IMPL.words=makeWords('words','en'); GAME_IMPL.palabras=makeWords('palabras','es');
 GAME_IMPL.sudoku=Sudoku; GAME_IMPL.flow=Flow; GAME_IMPL.patterns=Patterns;
+GAME_IMPL.pupiletras=Pupiletras;
 GAME_IMPL.spell=makeSpell('spell','en'); GAME_IMPL.deletrea=makeSpell('deletrea','es');
 
 /* ================= PLAYERS & SHELF ================= */
